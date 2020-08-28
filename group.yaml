@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  namespace: argocd
+  name: colorapi
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/hengenkaosu/demo.git'
+    path: .
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: test
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+project: default
+source:
+  repoURL: 'https://kubernetes-charts.storage.googleapis.com'
+  targetRevision: 1.13.3
+  helm:
+    values: 'a: b'
+  chart: coredns
+destination:
+  server: 'https://kubernetes.default.svc'
+  namespace: coredns
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - CreateNamespace=true
